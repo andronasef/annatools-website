@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          name: "andronasef/annatools"
+          repository: "andronasef/annatools"
       - name: List files in the repository
         run: |
             ls .
