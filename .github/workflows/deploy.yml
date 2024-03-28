@@ -29,10 +29,10 @@ jobs:
       - run: bun run generate
       - name: Unlighthouse
         run: |
-            npm install -g @unlighthouse/cli puppeteer netlify-cli
-            bun run preview
-            unlighthouse-ci --site localhost:3000 --budget 75 --build-static --output-path ./.output/public/lighthouse
-
+          bun install -g @unlighthouse/cli puppeteer netlify-cli
+          bun run preview & SERVER_PID=$!
+          unlighthouse-ci --site http://localhost:3000 --budget 75 --build-static --output-path ./.output/public/lighthouse
+          kill $SERVER_PID
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
