@@ -27,10 +27,19 @@ jobs:
       # Pick your own package manager and build script
       - run: bun install
       - run: bun run generate
+      - name: Unlighthouse
+        run: |
+            npm install -g @unlighthouse/cli puppeteer netlify-cli
+            bun run preview
+            unlighthouse-ci --site localhost:3000 --budget 75 --build-static --output-path ./.output/public/lighthouse
+
+        
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: ./.output/public
+
+      
   # Deployment job
   deploy:
     # Add a dependency to the build job
