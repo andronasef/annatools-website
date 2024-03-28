@@ -26,14 +26,7 @@ jobs:
       - uses: oven-sh/setup-bun@v1
       # Pick your own package manager and build script
       - run: bun install
-      - run: bun run generate
-      - name: Unlighthouse
-        run: |
-          bun install -g @unlighthouse/cli puppeteer netlify-cli
-          bun run preview & SERVER_PID=$!
-          unlighthouse-ci --site http://localhost:3000 --budget 75 --build-static --output-path ./.output/public/lighthouse
-          kill $SERVER_PID
-        
+      - run: bun run generate        
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
@@ -58,3 +51,31 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+ 
+  unlighthouse:
+    # # Add a dependency to the build job
+    # needs: deploy
+    # # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    # permissions:
+    #   pages: write      # to deploy to Pages
+    #   id-token: write   # to verify the deployment originates from an appropriate source
+    # # Deploy to the github_pages environment
+    # environment:
+    #   name: github_pages
+    #   url: ${{ steps.deployment.outputs.page_url }}
+    # # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - uses: oven-sh/setup-bun@v1
+      - name: Install Dependencies
+        run: bun install -g @unlighthouse/cli puppeteer netlify-cli
+        
+
+      - name: Unlighthouse assertions and client
+        run: unlighthouse-ci --site annatools.me --budget 75 --build-static
+
+      - name: Deploy
+        run: netlify deploy --dir=.unlighthouse --prod --message="New Release Deploy from GitHub Actions"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
