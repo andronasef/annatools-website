@@ -16,7 +16,6 @@ jobs:
 
       - name: Unlighthouse assertions and client
         run: unlighthouse-ci --site annatools.me --budget 75 --build-static --debug --disable-i18n-pages --mobile --throttle --samples 3
-	
 
       - name: Deploy
         run: netlify deploy --dir=.unlighthouse --prod --message="New Release Deploy from GitHub Actions"
