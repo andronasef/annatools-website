@@ -6,6 +6,17 @@ on:
     branches:
       - main
 jobs:
+  create-envfile:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Make envfile
+      uses: SpicyPizza/create-envfile@v2.0
+      with:
+        envkey_NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        envkey_BLOG_DATABASE_ID: ${{ secrets.BLOG_DATABASE_ID }}
+        envkey_TOOLS_CONTENT_DATABASE_ID: ${{ secrets.TOOLS_CONTENT_DATABASE_ID }}
+
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -28,29 +39,46 @@ jobs:
       - run: bun install
       - run: bunx nuxt build --preset github_pages  
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        # uses: actions/upload-pages-artifact@v1
+        # with:
+        #   path: ./.output/public
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: ./.output/public
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy /.output/public --project-name=annatools
+
+        # with:.
+        #   apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        #   workingDirectory: "/.output/public"
 
       
-  # Deployment job
-  deploy:
-    # Add a dependency to the build job
-    needs: build
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-    permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
-    # Deploy to the github_pages environment
-    environment:
-      name: github_pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    # Specify runner + deployment step
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+  # # Deployment job
+  # deploy:
+  #   # Add a dependency to the build job
+  #   needs: build
+  #   # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+  #   permissions:
+  #     pages: write      # to deploy to Pages
+  #     id-token: write   # to verify the deployment originates from an appropriate source
+  #   # Deploy to the github_pages environment
+  #   environment:
+  #     name: github_pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   # Specify runner + deployment step
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v1
  
   # unlighthouse:
   #   # # Add a dependency to the build job
