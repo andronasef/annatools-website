@@ -15,6 +15,11 @@ jobs:
         envkey_NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         envkey_BLOG_DATABASE_ID: ${{ secrets.BLOG_DATABASE_ID }}
         envkey_TOOLS_CONTENT_DATABASE_ID: ${{ secrets.TOOLS_CONTENT_DATABASE_ID }}
+        directory: .
+        file_name: .env
+        fail_on_empty: false
+        sort_keys: false
+
 
 
   build:
