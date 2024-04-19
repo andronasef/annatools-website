@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Create .env file      
-    - run:  |
+      run:  |
         echo "NOTION_TOKEN=${{ secrets.NOTION_TOKEN }}" >> .env
         echo "BLOG_DATABASE_ID=${{ secrets.BLOG_DATABASE_ID }}" >> .env
         echo "TOOLS_CONTENT_DATABASE_ID=${{ secrets.TOOLS_CONTENT_DATABASE_ID }}" >> .env
