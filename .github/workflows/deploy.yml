@@ -38,7 +38,7 @@ jobs:
       # Pick your own package manager and build script
       - run: bun install
       - run: bunx nuxt build --preset github_pages  
-      - name: Upload artifact
+      # - name: Upload artifact
         # uses: actions/upload-pages-artifact@v1
         # with:
         #   path: ./.output/public
