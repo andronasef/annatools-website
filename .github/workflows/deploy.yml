@@ -29,27 +29,10 @@ jobs:
         run: |
             ls .
       - run: corepack enable
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: "20"
-      # - uses: pnpm/action-setup@v3
-      #   with:
-      #     version: 8
       - uses: oven-sh/setup-bun@v1
-      # Pick your own package manager and build script
       - run: bun install
       - run: bunx nuxt generate
-      # - name: Upload artifact
-        # uses: actions/upload-pages-artifact@v1
-        # with:
-        #   path: ./.output/public
-
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    name: Deploy
-    steps:
+      
       - uses: actions/checkout@v4
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
@@ -58,54 +41,73 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy .output/public --project-name=annatools
 
-        # with:.
-        #   apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        #   workingDirectory: "/.output/public"
+  #     # - name: Upload artifact
+  #       # uses: actions/upload-pages-artifact@v1
+  #       # with:
+  #       #   path: ./.output/public
+
+
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   name: Deploy
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Deploy
+  #       uses: cloudflare/wrangler-action@v3
+  #       with:
+  #         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  #         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  #         command: pages deploy .output/public --project-name=annatools
+
+  #       # with:.
+  #       #   apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  #       #   workingDirectory: "/.output/public"
 
       
-  # # Deployment job
-  # deploy:
-  #   # Add a dependency to the build job
-  #   needs: build
-  #   # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-  #   permissions:
-  #     pages: write      # to deploy to Pages
-  #     id-token: write   # to verify the deployment originates from an appropriate source
-  #   # Deploy to the github_pages environment
-  #   environment:
-  #     name: github_pages
-  #     url: ${{ steps.deployment.outputs.page_url }}
-  #   # Specify runner + deployment step
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Deploy to GitHub Pages
-  #       id: deployment
-  #       uses: actions/deploy-pages@v1
+  # # # Deployment job
+  # # deploy:
+  # #   # Add a dependency to the build job
+  # #   needs: build
+  # #   # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+  # #   permissions:
+  # #     pages: write      # to deploy to Pages
+  # #     id-token: write   # to verify the deployment originates from an appropriate source
+  # #   # Deploy to the github_pages environment
+  # #   environment:
+  # #     name: github_pages
+  # #     url: ${{ steps.deployment.outputs.page_url }}
+  # #   # Specify runner + deployment step
+  # #   runs-on: ubuntu-latest
+  # #   steps:
+  # #     - name: Deploy to GitHub Pages
+  # #       id: deployment
+  # #       uses: actions/deploy-pages@v1
  
-  # unlighthouse:
-  #   # # Add a dependency to the build job
-  #   # needs: deploy
-  #   # # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-  #   # permissions:
-  #   #   pages: write      # to deploy to Pages
-  #   #   id-token: write   # to verify the deployment originates from an appropriate source
-  #   # # Deploy to the github_pages environment
-  #   # environment:
-  #   #   name: github_pages
-  #   #   url: ${{ steps.deployment.outputs.page_url }}
-  #   # # Specify runner + deployment step
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: oven-sh/setup-bun@v1
-  #     - name: Install Dependencies
-  #       run: bun install -g @unlighthouse/cli puppeteer netlify-cli
+  # # unlighthouse:
+  # #   # # Add a dependency to the build job
+  # #   # needs: deploy
+  # #   # # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+  # #   # permissions:
+  # #   #   pages: write      # to deploy to Pages
+  # #   #   id-token: write   # to verify the deployment originates from an appropriate source
+  # #   # # Deploy to the github_pages environment
+  # #   # environment:
+  # #   #   name: github_pages
+  # #   #   url: ${{ steps.deployment.outputs.page_url }}
+  # #   # # Specify runner + deployment step
+  # #   runs-on: ubuntu-latest
+  # #   steps:
+  # #     - uses: oven-sh/setup-bun@v1
+  # #     - name: Install Dependencies
+  # #       run: bun install -g @unlighthouse/cli puppeteer netlify-cli
         
 
-  #     - name: Unlighthouse assertions and client
-  #       run: unlighthouse-ci --site annatools.me --budget 75 --build-static
+  # #     - name: Unlighthouse assertions and client
+  # #       run: unlighthouse-ci --site annatools.me --budget 75 --build-static
 
-      # - name: Deploy
-      #   run: netlify deploy --dir=.unlighthouse --prod --message="New Release Deploy from GitHub Actions"
-      #   env:
-      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+  #     # - name: Deploy
+  #     #   run: netlify deploy --dir=.unlighthouse --prod --message="New Release Deploy from GitHub Actions"
+  #     #   env:
+  #     #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+  #     #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
