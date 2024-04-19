@@ -6,19 +6,7 @@ on:
     branches:
       - main
 jobs:
-  create-envfile:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Create .env file      
-      run:  |
-        echo "NOTION_TOKEN=${{ secrets.NOTION_TOKEN }}" >> .env
-        echo "BLOG_DATABASE_ID=${{ secrets.BLOG_DATABASE_ID }}" >> .env
-        echo "TOOLS_CONTENT_DATABASE_ID=${{ secrets.TOOLS_CONTENT_DATABASE_ID }}" >> .env
-
-
-
   build:
-    needs: create-envfile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +16,12 @@ jobs:
       - name: List files in the repository
         run: |
             ls .
+      - name: Create .env file      
+        run:  |
+          echo "NOTION_TOKEN=${{ secrets.NOTION_TOKEN }}" >> .env
+          echo "BLOG_DATABASE_ID=${{ secrets.BLOG_DATABASE_ID }}" >> .env
+          echo "TOOLS_CONTENT_DATABASE_ID=${{ secrets.TOOLS_CONTENT_DATABASE_ID }}" >> .env
+
       - run: corepack enable
       - uses: oven-sh/setup-bun@v1
       - run: bun install
