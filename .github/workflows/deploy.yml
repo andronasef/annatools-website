@@ -22,86 +22,35 @@ jobs:
           echo "BLOG_DATABASE_ID=${{ secrets.BLOG_DATABASE_ID }}" >> .env
           echo "TOOLS_CONTENT_DATABASE_ID=${{ secrets.TOOLS_CONTENT_DATABASE_ID }}" >> .env
 
-      - run: corepack enable
-      - uses: oven-sh/setup-bun@v1
-      - run: bun install
-      - run: bunx nuxt generate
+      - name: install bun 
+        uses: oven-sh/setup-bun@v1
+        
+      - name: Install Dependencies
+        run:  bun install 
+        
+      - name: Build Project
+        run: bunx nuxt generate
       
       # - uses: actions/checkout@v4
-      - name: Deploy
+      - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy .output/public --project-name=annatools
 
-  #     # - name: Upload artifact
-  #       # uses: actions/upload-pages-artifact@v1
-  #       # with:
-  #       #   path: ./.output/public
+  instant-index:
+      needs: build
+      runs-on: ubuntu-latest
+      steps:
+       - name: install bun 
+         uses: oven-sh/setup-bun@v1
 
+       - name: install indexer
+         run: bun i -g google-indexing-script
 
-  # deploy:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   name: Deploy
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Deploy
-  #       uses: cloudflare/wrangler-action@v3
-  #       with:
-  #         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  #         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-  #         command: pages deploy .output/public --project-name=annatools
+       - name: run script
+         run: GIS_CLIENT_EMAIL=${{ secrets.GIS_CLIENT_EMAIL }} GIS_PRIVATE_KEY=${{ secrets.GIS_PRIVATE_KEY }} gis annatools.me
 
-  #       # with:.
-  #       #   apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  #       #   workingDirectory: "/.output/public"
-
-      
-  # # # Deployment job
-  # # deploy:
-  # #   # Add a dependency to the build job
-  # #   needs: build
-  # #   # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-  # #   permissions:
-  # #     pages: write      # to deploy to Pages
-  # #     id-token: write   # to verify the deployment originates from an appropriate source
-  # #   # Deploy to the github_pages environment
-  # #   environment:
-  # #     name: github_pages
-  # #     url: ${{ steps.deployment.outputs.page_url }}
-  # #   # Specify runner + deployment step
-  # #   runs-on: ubuntu-latest
-  # #   steps:
-  # #     - name: Deploy to GitHub Pages
-  # #       id: deployment
-  # #       uses: actions/deploy-pages@v1
  
-  # # unlighthouse:
-  # #   # # Add a dependency to the build job
-  # #   # needs: deploy
-  # #   # # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-  # #   # permissions:
-  # #   #   pages: write      # to deploy to Pages
-  # #   #   id-token: write   # to verify the deployment originates from an appropriate source
-  # #   # # Deploy to the github_pages environment
-  # #   # environment:
-  # #   #   name: github_pages
-  # #   #   url: ${{ steps.deployment.outputs.page_url }}
-  # #   # # Specify runner + deployment step
-  # #   runs-on: ubuntu-latest
-  # #   steps:
-  # #     - uses: oven-sh/setup-bun@v1
-  # #     - name: Install Dependencies
-  # #       run: bun install -g @unlighthouse/cli puppeteer netlify-cli
-        
-
-  # #     - name: Unlighthouse assertions and client
-  # #       run: unlighthouse-ci --site annatools.me --budget 75 --build-static
-
-  #     # - name: Deploy
-  #     #   run: netlify deploy --dir=.unlighthouse --prod --message="New Release Deploy from GitHub Actions"
-  #     #   env:
-  #     #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-  #     #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          
