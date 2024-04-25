@@ -39,19 +39,5 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy .output/public --project-name=annatools
           packageManager: bun
-
-  instant-index:
-      needs: build
-      runs-on: ubuntu-latest
-      steps:
-       - name: install bun 
-         uses: oven-sh/setup-bun@v1
-
-       - name: install indexer
-         run: bun i -g google-indexing-script
-
-       - name: run script
-         run: GIS_CLIENT_EMAIL=${{ secrets.GIS_CLIENT_EMAIL }} GIS_PRIVATE_KEY=${{ secrets.GIS_PRIVATE_KEY }} gis annatools.me
-
  
           
