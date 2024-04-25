@@ -12,11 +12,13 @@ jobs:
       steps:
        - name: install node
          uses: actions/setup-node@v4
+       - name: create secret file
+         run: echo "${{secrets.INDEXING_SECRET_FILE}}" > ./service_account.json
 
        - name: install indexer
          run: npm i -g google-indexing-script
 
        - name: run script
-         run: GIS_CLIENT_EMAIL=${{ secrets.GIS_CLIENT_EMAIL }} GIS_PRIVATE_KEY=${{ secrets.GIS_PRIVATE_KEY }} gis annatools.me
+         run: gis annatools.me --path ./service_account.json
 
  
