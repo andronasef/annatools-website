@@ -21,6 +21,8 @@ jobs:
           echo "NOTION_TOKEN=${{ secrets.NOTION_TOKEN }}" >> .env
           echo "BLOG_DATABASE_ID=${{ secrets.BLOG_DATABASE_ID }}" >> .env
           echo "TOOLS_CONTENT_DATABASE_ID=${{ secrets.TOOLS_CONTENT_DATABASE_ID }}" >> .env
+          echo "PAGES_DATABASE_ID=${{ secrets.PAGES_DATABASE_ID }}" >> .env
+
 
       - name: install bun 
         uses: oven-sh/setup-bun@v1
