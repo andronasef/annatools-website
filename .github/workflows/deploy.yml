@@ -1,39 +1,49 @@
-# https://github.com/actions/deploy-pages#usage
 name: Deploy to Cloudflare Pages
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
         with:
           repository: "andronasef/annatools"
           token: ${{ secrets.GH_PAT }}
-      - name: List files in the repository
+          # Fetch the last commit message
+          fetch-depth: 1
+
+      - name: Get last commit message
+        id: get_commit_message
         run: |
-            ls .
-      - name: Create .env file      
-        run:  |
+          # Extract the last commit message
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          # Set the commit message as an output
+          echo "commit_message=${COMMIT_MESSAGE}" >> $GITHUB_ENV
+
+      - name: List files in the repository
+        run: ls .
+
+      - name: Create .env file
+        run: |
           echo "NOTION_TOKEN=${{ secrets.NOTION_TOKEN }}" >> .env
           echo "BLOG_DATABASE_ID=${{ secrets.BLOG_DATABASE_ID }}" >> .env
           echo "TOOLS_CONTENT_DATABASE_ID=${{ secrets.TOOLS_CONTENT_DATABASE_ID }}" >> .env
           echo "PAGES_DATABASE_ID=${{ secrets.PAGES_DATABASE_ID }}" >> .env
 
-
-      - name: install bun 
+      - name: Install bun
         uses: oven-sh/setup-bun@v1
-        
+
       - name: Install Dependencies
-        run:  bun install 
-        
+        run: bun install
+
       - name: Build Project
         run: bun generate
-      
-      # - uses: actions/checkout@v4
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
@@ -41,5 +51,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy .output/public --project-name=annatools
           packageManager: bun
- 
-          
+
+    # Set the name of the job dynamically
+    name: Build and Deploy - ${{ env.commit_message }}
