@@ -1,10 +1,10 @@
 name: Google Instant Indexing
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Deploy to Cloudflare Pages"]
-    types:
-      - completed
+  schedule:
+    # Set the schedule time
+    - cron: '0 2 * * *'
+
 
 jobs:
   instant-index:
@@ -26,4 +26,11 @@ jobs:
        - name: run script
          run: gis annatools.me --path ./service_account.json
 
- 
+  index-now:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: bojieyang/indexnow-action@v2
+      with:
+        sitemap-location: 'https://annatools.me/sitemap.xml' 
+        key: ${{ secrets.INDEXNOW_KEY }} # The key you get from IndexNow.
+
