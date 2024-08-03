@@ -1,4 +1,4 @@
-name: Google Instant Indexing
+name: Instant Indexing X Index Now
 on:
   workflow_dispatch:
   schedule:
@@ -7,7 +7,7 @@ on:
 
 
 jobs:
-  instant-index:
+  google-instant-index:
       runs-on: ubuntu-latest
       steps:
        - name: install node
@@ -31,6 +31,6 @@ jobs:
     steps:
     - uses: bojieyang/indexnow-action@v2
       with:
-        sitemap-location: 'https://annatools.me/sitemap.xml' 
+        sitemap-location: 'https://annatools.me/sitemap_index.xml' 
         key: ${{ secrets.INDEXNOW_KEY }} # The key you get from IndexNow.
 
